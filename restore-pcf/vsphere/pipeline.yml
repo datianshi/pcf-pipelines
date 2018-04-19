@@ -45,15 +45,15 @@ resources:
     secret_access_key: ((storage-secret-access-key))
     versioned_file: installation.zip
 
-- name: ert-backup-bucket
-  type: s3
-  source:
-    bucket: ((backup-artifact-bucket))
-    region_name: ((storage-region))
-    endpoint: ((storage-endpoint))
-    access_key_id: ((storage-access-key-id))
-    secret_access_key: ((storage-secret-access-key))
-    versioned_file: ert-backup.tar
+# - name: ert-backup-bucket
+#   type: s3
+#   source:
+#     bucket: ((backup-artifact-bucket))
+#     region_name: ((storage-region))
+#     endpoint: ((storage-endpoint))
+#     access_key_id: ((storage-access-key-id))
+#     secret_access_key: ((storage-secret-access-key))
+#     versioned_file: ert-backup.tar
 
 - name: director-backup-bucket
   type: s3
@@ -100,10 +100,10 @@ jobs:
       params:
         globs: ["*.ova"]
     - get: pcf-pipelines
-    - get: om-settings
+    - get: opsmgr-settings
 
   - task: deploy-opsman-vm
-    file: pcf-pipelines/tasks/deploy-opsman-vm/task.yml
+    file: pcf-pipelines/tasks/deploy-opsman-vm0/task.yml
     params:
       OPSMAN_TIMEOUT: {{opsman_timeout_seconds}}
       GOVC_USERNAME: {{vcenter_username}}
@@ -143,6 +143,7 @@ jobs:
     - get: pcf-pipelines
       passed: [install-opsmgr]
     - get: director-backup-bucket
+    - get: bbr-release
 
   - task: extract-binary
     config:
