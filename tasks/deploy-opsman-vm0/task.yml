@@ -26,7 +26,7 @@ inputs:
   - name: pcf-pipelines
 
 run:
-  path: pcf-pipelines/tasks/deploy-opsman-vm/task.sh
+  path: pcf-pipelines/tasks/deploy-opsman-vm0/task.sh
 
 params:
   OPSMAN_TIMEOUT:
