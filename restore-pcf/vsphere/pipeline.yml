@@ -68,7 +68,7 @@ resources:
 - name: bbr-release
   type: pivnet
   source:
-    api_token: ((pivnet-api-token))
+    api_token: ((pivnet_token))
     product_slug: p-bosh-backup-and-restore
     product_version: ((bbr-version))
 
