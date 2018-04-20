@@ -2,7 +2,7 @@
 
 . "$(dirname $0)"/export-director-metadata
 
-om-cmd curl -p /api/v0/deployed/director/credentials/bbr_ssh_credentials > bbr_keys.json
+om_cmd curl -p /api/v0/deployed/director/credentials/bbr_ssh_credentials > bbr_keys.json
 BOSH_PRIVATE_KEY=$(jq -r '.credential.value.private_key_pem' bbr_keys.json)
 
 pushd director-backup-artifact
