@@ -154,6 +154,8 @@ jobs:
   plan:
   - aggregate:
     - get: pcf-pipelines
+      passed: [deploy-bosh-only]
+      trigger: true
     - get: director-backup-bucket
     - get: bbr-release
 
