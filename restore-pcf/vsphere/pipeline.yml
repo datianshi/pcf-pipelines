@@ -141,7 +141,6 @@ jobs:
   plan:
   - aggregate:
     - get: pcf-pipelines
-      passed: [install-opsmgr]
     - get: director-backup-bucket
     - get: bbr-release
 

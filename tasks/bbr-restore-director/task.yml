@@ -7,7 +7,7 @@ image_resource:
 
 inputs:
   - name: pcf-pipelines
-  - name: bbr-binary
+  - name: binary
   - name: director-backup-bucket
 
 params:
