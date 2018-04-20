@@ -144,44 +144,45 @@ jobs:
     - get: director-backup-bucket
     - get: bbr-release
 
-  - task: extract-binary
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: cloudfoundrylondon/bbr-pipeline
-          tag: release-candidate
-      inputs:
-      - name: bbr-release
-      outputs:
-      - name: binary
-      run:
-        path: sh
-        args:
-        - -c
-        - |
-          tar -xvf bbr-release/bbr*.tar
-          cp releases/bbr binary/
+  - aggregate:
+    - task: extract-binary
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: cloudfoundrylondon/bbr-pipeline
+            tag: release-candidate
+        inputs:
+        - name: bbr-release
+        outputs:
+        - name: binary
+        run:
+          path: sh
+          args:
+          - -c
+          - |
+            tar -xvf bbr-release/bbr*.tar
+            cp releases/bbr binary/
 
-  - task: extract-archive
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: cloudfoundrylondon/bbr-pipeline
-          tag: release-candidate
-      inputs:
-      - name: director-backup-bucket
-      outputs:
-      - name: archive
-      run:
-        path: sh
-        args:
-        - -c
-        - |
-          tar -xvf director-backup-bucket/director-backup.tar --strip 1 -C archive
+    - task: extract-archive
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: cloudfoundrylondon/bbr-pipeline
+            tag: release-candidate
+        inputs:
+        - name: director-backup-bucket
+        outputs:
+        - name: archive
+        run:
+          path: sh
+          args:
+          - -c
+          - |
+            tar -xvf director-backup-bucket/director-backup.tar --strip 1 -C archive
 
   - task: bbr-restore-director
     tags:
