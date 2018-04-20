@@ -10,6 +10,6 @@ pushd director-backup-bucket
   --username bbr \
   --private-key-path <(echo "${BBR_PRIVATE_KEY}") \
   restore \
-  --artifact-path .
+  --artifact-path ./director-backup.tar
 
 popd
