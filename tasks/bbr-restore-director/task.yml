@@ -9,7 +9,7 @@ image_resource:
 inputs:
   - name: pcf-pipelines
   - name: binary
-  - name: director-backup-bucket
+  - name: archive
 
 params:
   SKIP_SSL_VALIDATION: false
