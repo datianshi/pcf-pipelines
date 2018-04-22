@@ -45,16 +45,6 @@ resources:
     secret_access_key: ((storage-secret-access-key))
     versioned_file: installation.zip
 
-# - name: ert-backup-s3
-#   type: s3
-#   source:
-#     bucket: ((backup-artifact-bucket))
-#     region_name: ((storage-region))
-#     endpoint: ((storage-endpoint))
-#     access_key_id: ((storage-access-key-id))
-#     secret_access_key: ((storage-secret-access-key))
-#     versioned_file: ert-backup.tar
-
 - name: director-backup-bucket
   type: s3
   source:
@@ -75,6 +65,28 @@ resources:
     access_key_id: ((storage-access-key-id))
     secret_access_key: ((storage-secret-access-key))
     versioned_file: ert-backup.tar
+
+# - name: director-backup-bucket
+#   type: s3
+#   source:
+#     bucket: ((backup-artifact-bucket))
+#     region_name: us-east-1
+#     endpoint: ((minio-endpoint))
+#     access_key_id: ((minio-access-key-id))
+#     secret_access_key: ((minio-secret-access-key))
+#     regexp: ert-backup-(.*).tar
+#     disable_ssl: true
+
+# - name: ert-backup-s3
+#   type: s3
+#   source:
+#     bucket: ((backup-artifact-bucket))
+#     region_name: us-east-1
+#     endpoint: ((minio-endpoint))
+#     access_key_id: ((minio-access-key-id))
+#     secret_access_key: ((minio-secret-access-key))
+#     regexp: director-backup-(.*).tar
+#     disable_ssl: true
 
 - name: bbr-release
   type: pivnet
