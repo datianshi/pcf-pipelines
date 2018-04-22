@@ -45,48 +45,48 @@ resources:
     secret_access_key: ((storage-secret-access-key))
     versioned_file: installation.zip
 
+# - name: director-backup-bucket
+#   type: s3
+#   source:
+#     bucket: ((backup-artifact-bucket))
+#     region_name: ((storage-region))
+#     endpoint: ((storage-endpoint))
+#     access_key_id: ((storage-access-key-id))
+#     secret_access_key: ((storage-secret-access-key))
+#     versioned_file: director-backup.tar
+#     disable_ssl: ((s3_disable_ssl))
+#
+# - name: ert-backup-s3
+#   type: s3
+#   source:
+#     bucket: ((backup-artifact-bucket))
+#     region_name: ((storage-region))
+#     endpoint: ((storage-endpoint))
+#     access_key_id: ((storage-access-key-id))
+#     secret_access_key: ((storage-secret-access-key))
+#     versioned_file: ert-backup.tar
+
 - name: director-backup-bucket
   type: s3
   source:
     bucket: ((backup-artifact-bucket))
-    region_name: ((storage-region))
-    endpoint: ((storage-endpoint))
-    access_key_id: ((storage-access-key-id))
-    secret_access_key: ((storage-secret-access-key))
-    versioned_file: director-backup.tar
-    disable_ssl: ((s3_disable_ssl))
+    region_name: us-east-1
+    endpoint: ((minio-endpoint))
+    access_key_id: ((minio-access-key-id))
+    secret_access_key: ((minio-secret-access-key))
+    regexp: director-backup-(.*).tar
+    disable_ssl: true
 
 - name: ert-backup-s3
   type: s3
   source:
     bucket: ((backup-artifact-bucket))
-    region_name: ((storage-region))
-    endpoint: ((storage-endpoint))
-    access_key_id: ((storage-access-key-id))
-    secret_access_key: ((storage-secret-access-key))
-    versioned_file: ert-backup.tar
-
-# - name: director-backup-bucket
-#   type: s3
-#   source:
-#     bucket: ((backup-artifact-bucket))
-#     region_name: us-east-1
-#     endpoint: ((minio-endpoint))
-#     access_key_id: ((minio-access-key-id))
-#     secret_access_key: ((minio-secret-access-key))
-#     regexp: ert-backup-(.*).tar
-#     disable_ssl: true
-
-# - name: ert-backup-s3
-#   type: s3
-#   source:
-#     bucket: ((backup-artifact-bucket))
-#     region_name: us-east-1
-#     endpoint: ((minio-endpoint))
-#     access_key_id: ((minio-access-key-id))
-#     secret_access_key: ((minio-secret-access-key))
-#     regexp: director-backup-(.*).tar
-#     disable_ssl: true
+    region_name: us-east-1
+    endpoint: ((minio-endpoint))
+    access_key_id: ((minio-access-key-id))
+    secret_access_key: ((minio-secret-access-key))
+    regexp: ert-backup-(.*).tar
+    disable_ssl: true
 
 - name: bbr-release
   type: pivnet
@@ -215,7 +215,7 @@ jobs:
           args:
           - -c
           - |
-            tar -xvf director-backup-bucket/director-backup.tar --strip 1 -C archive
+            tar -xvf director-backup-bucket/director-backup*.tar --strip 1 -C archive
 
   - task: bbr-restore-director
     tags:
@@ -271,7 +271,7 @@ jobs:
           args:
           - -c
           - |
-            tar -xvf ert-backup-s3/ert-backup.tar --strip 1 -C archive
+            tar -xvf ert-backup-s3/ert-backup*.tar --strip 1 -C archive
 
   - task: bbr-restore-pas
     tags:

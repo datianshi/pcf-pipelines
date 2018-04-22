@@ -6,7 +6,7 @@ set -x
 
 command=""
 if [ "$BBR_OPERATION" == "director" ]; then
-	command="director --host "${BOSH_ADDRESS}"
+	command="director --host ${BOSH_ADDRESS}"
 elif [ "$BBR_OPERATION" == "deployment" ]; then
 	command="deployment -d ${ERT_DEPLOYMENT_NAME} -t ${BOSH_ADDRESS} --ca-cert ${BOSH_CA_CERT_PATH}"
 else
