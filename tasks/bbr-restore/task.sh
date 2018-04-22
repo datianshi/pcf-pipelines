@@ -1,5 +1,7 @@
 #!/bin/bash -eu
 
+set -x
+
 . "$(dirname $0)"/export-director-metadata
 
 command=""
