@@ -64,6 +64,17 @@ resources:
     access_key_id: ((storage-access-key-id))
     secret_access_key: ((storage-secret-access-key))
     versioned_file: director-backup.tar
+    disable_ssl: ((s3_disable_ssl))
+
+- name: ert-backup-bucket
+  type: s3
+  source:
+    bucket: ((backup-artifact-bucket))
+    region_name: ((storage-region))
+    endpoint: ((storage-endpoint))
+    access_key_id: ((storage-access-key-id))
+    secret_access_key: ((storage-secret-access-key))
+    versioned_file: ert-backup.tar
 
 - name: bbr-release
   type: pivnet
@@ -71,9 +82,6 @@ resources:
     api_token: ((pivnet_token))
     product_slug: p-bosh-backup-and-restore
     product_version: ((bbr-version))
-
-
-
 
 - name: schedule
   type: time
@@ -158,7 +166,6 @@ jobs:
       trigger: true
     - get: director-backup-bucket
     - get: bbr-release
-
   - aggregate:
     - task: extract-binary
       config:
@@ -179,7 +186,6 @@ jobs:
           - |
             tar -xvf bbr-release/bbr*.tar
             cp releases/bbr binary/
-
     - task: extract-archive
       config:
         platform: linux
@@ -201,18 +207,76 @@ jobs:
 
   - task: bbr-restore-director
     tags:
-    file: pcf-pipelines/tasks/bbr-restore-director/task.yml
+    file: pcf-pipelines/tasks/bbr-restore/task.yml
     params:
       SKIP_SSL_VALIDATION: ((skip-ssl-validation))
       OPSMAN_URL: "https://((opsman_domain_or_ip_address))"
       OPSMAN_USERNAME: ((opsman_admin_username))
       OPSMAN_PASSWORD: ((opsman_admin_password))
+      BBR_OPERATION: director
+
+- name: restore-pas
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      trigger: true
+    - get: ert-backup-bucket
+    - get: bbr-release
+  - aggregate:
+    - task: extract-binary
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: cloudfoundrylondon/bbr-pipeline
+            tag: release-candidate
+        inputs:
+        - name: bbr-release
+        outputs:
+        - name: binary
+        run:
+          path: sh
+          args:
+          - -c
+          - |
+            tar -xvf bbr-release/bbr*.tar
+            cp releases/bbr binary/
+    - task: extract-archive
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: cloudfoundrylondon/bbr-pipeline
+            tag: release-candidate
+        inputs:
+        - name: ert-backup-bucket
+        outputs:
+        - name: archive
+        run:
+          path: sh
+          args:
+          - -c
+          - |
+            tar -xvf ert-backup-bucket/ert-backup.tar --strip 1 -C archive
+
+  - task: bbr-restore-pas
+    tags:
+    file: pcf-pipelines/tasks/bbr-restore/task.yml
+    params:
+      SKIP_SSL_VALIDATION: ((skip-ssl-validation))
+      OPSMAN_URL: "https://((opsman_domain_or_ip_address))"
+      OPSMAN_USERNAME: ((opsman_admin_username))
+      OPSMAN_PASSWORD: ((opsman_admin_password))
+      BBR_OPERATION: deployment
 
 - name: apply-changes
   plan:
   - aggregate:
     - get: pcf-pipelines
       passed: [restore-bosh]
+      trigger: true
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:

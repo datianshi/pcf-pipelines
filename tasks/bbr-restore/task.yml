@@ -16,6 +16,6 @@ params:
   OPSMAN_URL:
   OPSMAN_USERNAME:
   OPSMAN_PASSWORD:
-
+  BBR_OPERATION:
 run:
-  path: pcf-pipelines/tasks/bbr-restore-director/task.sh
+  path: pcf-pipelines/tasks/bbr-restore/task.sh
